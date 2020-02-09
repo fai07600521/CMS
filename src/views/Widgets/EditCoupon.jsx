@@ -9,8 +9,12 @@
 /* eslint-disable react/jsx-no-undef */
 /* eslint-disable no-console */
 /* eslint-disable react/no-deprecated */
+import qs from "query-string";
 import React from "react";
 import axios from "axios";
+import Calendar from 'react-input-calendar'
+import moment from 'moment'
+import DatePicker from 'react-datepicker';
 import Swal from "sweetalert2";
 //import Widgegts from "./views/Widgets/Widgets";
 import PropTypes from "prop-types";
@@ -31,6 +35,7 @@ import { observer, inject } from "mobx-react";
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.jsx";
 import { Form, FormGroup, Input, Label, Col } from "reactstrap";
 import { responsiveFontSizes } from "@material-ui/core/styles";
+import CustomSelect from './CustomSelect';
 class ReactTables extends React.Component {
   constructor(props) {
     super(props);
@@ -51,25 +56,88 @@ class ReactTables extends React.Component {
     this.setState({ rate: event.target.value });
   };
 
-  async componentDidMount() {
-    console.log("get in com");
+  handleClick(index) {
+    console.log("get in handleclick index")
+    console.log(index)
     try {
-      const response = await axios.get(`https://api.joydrive.me/pointRate/`);
-
-      if (response.status === 200) {
-        this.response = response.data.rate;
-      }
-      this.setState({ rate: response.data.rate });
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error);
+      this.alert(index);
+    } catch (err) {
+      console.log(err.message);
     }
   }
 
+  async handleClick2() {
+    this.props.history.push(`admin/coupon`);
+  }
+
+  async alert(index) {
+    console.log("alert");
+    let confirmDialogOptions = {
+      title: `Confirmation`,
+      html: `<div style="text-align:left;padding: 0 10px 0 10px">Do you want to confirm ?</div>`,
+      type: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      reverseButtons: true,
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ยืนยัน",
+      cancelButtonText: "ยกเลิก",
+      customClass: "font-size-200",
+      showLoaderOnConfirm: true,
+      preConfirm: async () => {
+        try {
+          let result = await this.props.editCouponStore.rdyToPut(index);
+          console.log(index)
+          console.log("Result .....")
+          console.log(result)
+          result === 200 &&
+            (await Swal.fire({
+              type: "success",
+              title: "Your edit has been done",
+              text: "Thank you for your edition",
+              showConfirmButton: false
+              //timer: 1500
+            }));
+          return result;
+        } catch (error) {
+          await Swal.fire({
+            type: "error",
+            title: `การบันทึกล้มเหลว ${error.message}`
+          });
+          // Swal.showValidationError(`การบันทึกล้มเหลว ${error.message}`);
+        }
+      },
+      allowOutsideClick: () => !Swal.isLoading()
+    };
+    return await Swal.fire(confirmDialogOptions);
+  }
+
+  async componentWillMount() {
+    // eslint-disable-next-line react/prop-typespush("/error")
+    const query = qs.parse(this.props.location.search);
+    const l = await this.props.editCouponStore.initData(query.id);
+    console.log("data will mount");
+    console.log(l);
+  }
+
+  handleChange(html, key) {
+    console.log("html", html);
+    this.props.editCouponStore.handleChange(html, key);
+  }
+
+  async handlechangeCustomSelect(value , key){
+    console.log('value',value)
+    await this.props.editCouponStore.handleChange(value, key);
+    
+  }
   render() {
     // console.log("see this",this.state.data)
     const { classes } = this.props;
     const { value } = this.state;
+    const query = qs.parse(this.props.location.search);
+    const data = this.props.editCouponStore.toJS();
+    console.log("dataaaaa");
+    console.log(data.data);
     return (
       <GridContainer>
         <GridItem xs={12}>
@@ -96,9 +164,16 @@ class ReactTables extends React.Component {
                       className={classes.input}
                       fluid
                       label="name"
-                      placeholder="Name"
-                      value 
-                      onChange={this.appHandleSubmit}
+                      value={data.data.name}
+                      onChange={html =>
+                        this.handleChange(html.target.value, "name")
+                      }
+
+                    /* inputProps={{
+                      value: "data.name",
+                      onChange: e =>
+                        this.handleChange(e.target.value, "name")
+                    }}*/
                     />
                   </FormGroup>
 
@@ -109,18 +184,21 @@ class ReactTables extends React.Component {
                       sm={2}
                       size="lg"
                     >
-                      DiscountType
+                      Visible
                     </Label>
                     <Input
                       className={classes.select}
                       type="select"
-                      name="select"
-                      id="exampleSelect"
+                      name="visible"
+                      id="visible"
+                      onChange={html =>
+                        this.handleChange(html.target.value, "visible")
+                      }
                     >
-                      <option value="True" onChange={this.myChangeHandler}>
+                      <option value="true" onChange={this.myChangeHandler}>
                         True
                       </option>
-                      <option value="False" onChange={this.myChangeHandler}>
+                      <option value="false" onChange={this.myChangeHandler}>
                         False
                       </option>
                     </Input>
@@ -139,6 +217,10 @@ class ReactTables extends React.Component {
                       className={classes.input}
                       label="code"
                       placeholder="Code"
+                      value={data.data.code}
+                      onChange={html =>
+                        this.handleChange(html.target.value, "code")
+                      }
                     />
                   </FormGroup>
 
@@ -155,6 +237,10 @@ class ReactTables extends React.Component {
                       className={classes.input}
                       abel="point"
                       placeholder="Point"
+                      value={data.data.point}
+                      onChange={html =>
+                        this.handleChange(html.target.value, "point")
+                      }
                     />
                   </FormGroup>
 
@@ -168,20 +254,25 @@ class ReactTables extends React.Component {
                       DiscountType
                     </Label>
                     <Input
+                   
                       className={classes.select}
                       type="select"
                       name="select"
                       id="exampleSelect"
+                      placeholder = "Select an option"
+                      onChange={html =>
+                        this.handleChange(html.target.value, "discountType")
+                      }
                     >
-                      <option value="Amount" onChange={this.myChangeHandler}>
+                      <option value="amount" onChange={this.myChangeHandler}>
                         Amount
                       </option>
-                      <option value="Percent" onChange={this.myChangeHandler}>
+                      <option value="percent" onChange={this.myChangeHandler}>
                         Percent
                       </option>
                     </Input>
                   </FormGroup>
-
+                  
                   <FormGroup widths={2}>
                     <Label
                       className={classes.input}
@@ -195,9 +286,13 @@ class ReactTables extends React.Component {
                       className={classes.input}
                       label="discount"
                       placeholder="Discount"
+                      value={data.data.discount}
+                      onChange={html =>
+                        this.handleChange(html.target.value, "discount")
+                      }
                     />
                   </FormGroup>
-
+                  
                   <FormGroup unstackable widths={2}>
                     <Label
                       className={classes.input}
@@ -211,37 +306,64 @@ class ReactTables extends React.Component {
                       className={classes.input}
                       label="maxUse"
                       placeholder="maxUse"
+                      value={data.data.maxUse}
+                      onChange={html =>
+                        this.handleChange(html.target.value, "maxUse")
+                      }
                     />
                   </FormGroup>
-
+                  
                   <FormGroup>
                     <Label className={classes.input} for="exampleDate">
                       Expire
                     </Label>
                     <Input
                       type="date"
-                      name="date"
+                      name="expire"
                       className={classes.input}
-                      id="Expire"
                       placeholder="Expire"
+                      value={  moment(data.data.expire).format('DD/MM/YYYY') }  
+                      onChange={html =>
+                        this.handleChange(html.target.value, "expire")
+                      }
                     />
                   </FormGroup>
 
-                  <FormGroup>
-                    <Label className={classes.input} for="exampleDate">
+                  <FormGroup unstackable widths={2}>
+                    <Label
+                      className={classes.input}
+                      for="exampleEmail"
+                      sm={2}
+                      size="lg"
+                    >
                       maxUsePerUser
                     </Label>
                     <Input
-                      type="date"
-                      name="date"
                       className={classes.input}
-                      id="maxUsePerUser"
+                      label="maxUse"
                       placeholder="maxUsePerUser"
+                      value={data.data.maxUsePerUser}
+                      onChange={html =>
+                        this.handleChange(html.target.value, "maxUsePerUser")
+                      }
                     />
                   </FormGroup>
 
-                  <Button color="success" type="submit">
-                    Submit
+                  <Button
+                    color="default"
+                    className={classes.addButton}
+                    onClick={() => this.handleClick2()}
+                    style={{ minWidth: "110px" }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    color="success"
+                    className={classes.addButton}
+                    onClick={() => this.handleClick(data.data.id)}
+                    style={{ minWidth: "110px" }}
+                  >
+                    Edit
                   </Button>
                 </Form>
               </div>
@@ -292,7 +414,7 @@ const styles = {
     // eslint-disable-next-line no-dupe-keys
     borderRadius: "15px"
   },
- 
+
   text: {
     padding: "20px",
     color: "white"
@@ -311,9 +433,8 @@ const styles = {
   type: {
     padding: "50px",
     color: "black"
-  },
-  font: {}
+  }
 };
 
-export const page = inject("orderList")(observer(ReactTables));
+export const page = inject("editCouponStore")(observer(ReactTables));
 export default withStyles(styles)(page);

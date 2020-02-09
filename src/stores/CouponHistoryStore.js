@@ -3,28 +3,30 @@
 import BaseStore from "./BaseStore";
 import axios from "axios";
 import { api } from "./../config/config";
-
+import Cookies from "universal-cookie";
+const cookies = new Cookies();
 export class OrderListStore extends BaseStore {
   constructor() {
     super();
     this.observable({
       loading: false,
-      orderList: []
+      couponHistory: []
     });
   }
 
   async initData() {
     try {
       const response = await axios.get(
-        ` https://api.joydrive.me/booking/use/code/`
-      );
-      console.log("get in init", response);
+        `https://api.joydrive.me/booking/use/code/`,{
+          headers: {
+            Authorization: `Bearer ${cookies.get("loginToken")}`
+          }
+        }
+      );console.log("get in init", response.data.bookings);
       if (response.status === 200) {
-        this.orderList = response.data.coupons;
+        this.couponHistory = response.data.bookings;
       }
-      //console.log(response);
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error(error);
     }
   }
@@ -35,7 +37,7 @@ export class OrderListStore extends BaseStore {
     // eslint-disable-next-line prettier/prettier
     console.log("delete", index);
     // delete this.courseList[index];
-    this.orderList.splice(index, 1);
+    this.couponHistory.splice(index, 1);
   }
 }
 

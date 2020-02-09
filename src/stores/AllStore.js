@@ -1,13 +1,13 @@
 /* eslint-disable no-undef */
-import courseList from "./CourseListStore";
+import couponList from "./CouponListStore";
 import historyEditStore from "./HistoryEditStore";
 import createCouponStore from "./CreateCouponStore";
-import orderList from "./OrderListStore";
-import courseEditStore from "./CourseEditStore";
+import couponHistory from "./CouponHistoryStore";
+import editCouponStore from "./EditCouponStore";
 export default {
-  courseList,
+  couponList,
   historyEditStore,
   createCouponStore,
-  orderList,
-  courseEditStore
+  couponHistory,
+  editCouponStore
 };

@@ -1,46 +1,71 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-undef */
 /* eslint-disable no-console */
+import { toJS } from 'mobx';
 import BaseStore from "./BaseStore";
 import axios from "axios";
 import { api } from "./../config/config";
+import Cookies from "universal-cookie";
+const cookies = new Cookies();
 
-export class CourseEditStore extends BaseStore {
+export class editCouponStore extends BaseStore {
   constructor() {
     super();
     this.observable({
-      id: "",
+      
       data: {
-        id: "",
-        title: "",
-        category_id: "",
-        body: "",
+        id:"",
+        name: "",
+        visible:"",
+        code: "",
+        point: "",
+        discountType: "",
+        discount: "",
+        maxUse: "",
+        expire: "",
+        maxUsePerUser: ""
       }
     });
   }
 
   async initData(id) {
+    console.log("initData id");
+    console.log(id);
     try {
-      const response = await axios.get(`${api.url}/coupon/${id}`);
-      console.log("init",response.data[0])
+      const response = await axios.get(`https://api.joydrive.me/coupon/${id}` , 
+       {
+        headers: {
+          Authorization: `Bearer ${cookies.get('loginToken')}`
+        }
+      })
+      console.log("inittt",response)
       if (response.status === 200) {
-        this.id = response.data[0].id||``;
-        this.data.id = response.data[0].id || ``;
-        this.data.title = response.data[0].title || ``;
-        this.data.category_id = response.data[0].category_id || ``;
-        this.data.body = response.data[0].body || ``;
+        this.data.id = response.data.coupon.id || ``;
+        this.data.name = response.data.coupon.name || ``;
+        this.data.code = response.data.coupon.code || ``;
+        this.data.point = response.data.coupon.point || ``;
+        this.data.discountType = response.data.coupon.discountType || ``;
+        this.data.discount = response.data.coupon.discount || ``;
+        this.data.maxUse = response.data.coupon.maxUse || ``;
+        this.data.expire = response.data.coupon.expire || ``;
+        this.data.maxUsePerUser = response.data.coupon.maxUsePerUser || ``;
       }
-      console.log('this',this);
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error(error);
     }
   }
 
-  async rdyToPut(url) {
-    const id = this.id
+  async rdyToPut(id) {
     try {
-      const response = await axios.put(`${url}/edit/course_detail/${id}`,this.data);
+      console.log(id)
+      console.log("rdyToPut",toJS(this.data));
+      const response = await axios.patch(`https://api.joydrive.me/coupon/${id}`,toJS(this.data),
+      {
+        headers: {
+          Authorization: `Bearer ${cookies.get('loginToken')}`
+        }
+      })
       console.log("rdyToPut",response);
       if (response.status === 200) {
         return response.status;
@@ -64,7 +89,6 @@ export class CourseEditStore extends BaseStore {
 
 
   async handleChange(html, key) {
-    console.log("timeStart",html)
     this['data'][key] = html;
 
     // this.data == this['data']
@@ -75,4 +99,4 @@ export class CourseEditStore extends BaseStore {
   }
 }
 
-export default new CourseEditStore();
+export default new editCouponStore();

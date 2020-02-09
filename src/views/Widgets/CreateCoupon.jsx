@@ -34,8 +34,79 @@ import { responsiveFontSizes } from "@material-ui/core/styles";
 class ReactTables extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { };
+    this.state = {
+      checked: [24, 22],
+      uploading: false,
+      images: null,
+      status: false,
+      file: null,
+      fileForUpload: null,
+      id: null
+    };
+    // this.submit = this.submit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleChangeEnabled = this.handleChangeEnabled.bind(this);
   }
+
+  handleClick() {
+    try {
+      console.log("chick");
+      const result = this.props.createCouponStore.rdyToPost();
+      console.log(result);
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
+
+  passValidate(value2) {
+    console.log("!value.name && passValidate");
+    console.log(
+      !value.name &&
+        !value.code &&
+        !value.dateEndInvalid &&
+        !value.dateEnd &&
+        !value.point &&
+        !value.discountType &&
+        !value.discount &&
+        !value.maxUse &&
+        !value.expire &&
+        !value.maxUsePerUser
+    );
+
+    if (
+      !value.name &&
+      !value.code &&
+      !value.dateEndInvalid &&
+      !value.dateEnd &&
+      !value.point &&
+      !value.discountType &&
+      !value.discount &&
+      !value.maxUse &&
+      !value.expire &&
+      !value.maxUsePerUser
+    ) {
+      return true;
+    }
+    return false;
+  }
+
+  validate = async (x, inValid) => {
+    // await this.props.createCouponStore.getUrl()
+    console.log("validate get in");
+    console.log(x);
+    if (
+      (x.name === "" || x.code === "" || x.discountType === "",
+      x.discount === "")
+    ) {
+      return Swal.fire({
+        type: "error",
+        title: "createCoupon submission failed!",
+        footer: "Please check the form again"
+      });
+    }
+    this.alert();
+    return null;
+  };
 
   mySubmitHandler = event => {
     event.preventDefault();
@@ -45,10 +116,6 @@ class ReactTables extends React.Component {
         Swal.fire("SAVE!", "Point Setting finished!", "success");
       });
     //alert("You are submitting " + this.state.username);
-  };
-
-  myChangeHandler = event => {
-    this.setState({ rate: event.target.value });
   };
 
   /*async componentDidMount() {
@@ -67,14 +134,67 @@ class ReactTables extends React.Component {
   }*/
 
   handleChange(html, key) {
+    console.log("handleChange");
     this.props.createCouponStore.handleChange(html, key);
+  }
+
+  handleChangeEnabled(event) {
+    this.setState({ selectedEnabled: event.target.value });
+  }
+  async handleClick2() {
+    this.props.history.push(`admin/coupon`);
+  }
+
+  async alert() {
+    console.log("alert");
+    let confirmDialogOptions = {
+      title: `Confirmation`,
+      html: `<div style="text-align:left;padding: 0 10px 0 10px">Do you want to confirm ?</div>`,
+      type: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      reverseButtons: true,
+      cancelButtonColor: "#d33",
+      confirmButtonText: "submit",
+      cancelButtonText: "cancel",
+      customClass: "font-size-200",
+      showLoaderOnConfirm: true,
+      preConfirm: async () => {
+        try {
+          console.log("get ready to post");
+          let result = await this.props.createCouponStore.rdyToPost();
+          console.log("result alert", result);
+          result === 200 &&
+            (await Swal.fire({
+              type: "success",
+              title: "Your order has been done",
+              text: "Thank you for your purchase",
+              showConfirmButton: false,
+              timer: 1500
+            }));
+
+          return result;
+        } catch (error) {
+          await Swal.fire({
+            type: "error",
+            title: `การบันทึกล้มเหลว ${error.message}`,
+            timer: 1500
+          });
+          // Swal.showValidationError(`การบันทึกล้มเหลว ${error.message}`);
+        }
+      },
+      allowOutsideClick: () => !Swal.isLoading()
+    };
+    return await Swal.fire(confirmDialogOptions);
   }
 
   render() {
     // console.log("see this",this.state.data)
     const { classes } = this.props;
-    //const { isInvalid } = this.props.createCouponStore.toJS();
-  // console.log(isInvalid)
+    const { isInvalid } = this.props.createCouponStore.toJS();
+    const { data } = this.props.createCouponStore.toJS();
+    console.log("isInvalid5555");
+    console.log(data);
     return (
       <GridContainer>
         <GridItem xs={12}>
@@ -102,10 +222,10 @@ class ReactTables extends React.Component {
                       fluid
                       label="name"
                       placeholder="Name"
-                      //inputProps={{
-                        //invalid: isInvalid.name,
-                        //onChange: e => this.handleChange(e.target.value, "name")
-                    //  }}
+                      onChange={html =>
+                        this.handleChange(html.target.value, "name")
+                      }
+                      invalid={isInvalid.name}
                     />
                   </FormGroup>
 
@@ -123,9 +243,13 @@ class ReactTables extends React.Component {
                       label="code"
                       placeholder="Code"
                       //inputProps={{
-                        //invalid: isInvalid.code,
-                        //onChange: e => this.handleChange(e.target.value, "code")
-                     // }}
+                      //invalid: isInvalid.code,
+                      //onChange: e => this.handleChange(e.target.value, "code")
+                      // }}
+                      onChange={html =>
+                        this.handleChange(html.target.value, "code")
+                      }
+                      invalid={isInvalid.code}
                     />
                   </FormGroup>
 
@@ -142,11 +266,10 @@ class ReactTables extends React.Component {
                       className={classes.input}
                       abel="point"
                       placeholder="Point"
-                      //inputProps={{
-                        //invalid: isInvalid.point,
-                        //onChange: e =>
-                          //this.handleChange(e.target.value, "point")
-                      //}}
+                      onChange={html =>
+                        this.handleChange(html.target.value, "point")
+                      }
+                      invalid={isInvalid.point}
                     />
                   </FormGroup>
 
@@ -159,19 +282,17 @@ class ReactTables extends React.Component {
                     >
                       DiscountType
                     </Label>
-                    <Input
+                    <select
                       className={classes.select}
-                      type="select"
-                      name="select"
-                      id="exampleSelect"
+                      onChange={html =>
+                        this.handleChange(html.target.value, "discountType")
+                      }
+                      invalid={isInvalid.discountType}
                     >
-                      <option value="Amount" onChange={this.myChangeHandler}>
-                        Amount
-                      </option>
-                      <option value="Percent" onChange={this.myChangeHandler}>
-                        Percent
-                      </option>
-                    </Input>
+                      <option value="">Select DiscountType</option>
+                      <option value="amount">Amount</option>
+                      <option value="percent">Percent</option>
+                    </select>
                   </FormGroup>
 
                   <FormGroup widths={2}>
@@ -187,11 +308,10 @@ class ReactTables extends React.Component {
                       className={classes.input}
                       label="discount"
                       placeholder="Discount"
-                      //inputProps={{
-                        //invalid: isInvalid.discount,
-                        //onChange: e =>
-                          //this.handleChange(e.target.value, "discount")
-                     // }}
+                      onChange={html =>
+                        this.handleChange(html.target.value, "discount")
+                      }
+                      invalid={isInvalid.discount}
                     />
                   </FormGroup>
 
@@ -208,11 +328,10 @@ class ReactTables extends React.Component {
                       className={classes.input}
                       label="maxUse"
                       placeholder="maxUse"
-                      //inputProps={{
-                        //invalid: isInvalid.maxUse,
-                       // onChange: e =>
-                         // this.handleChange(e.target.value, "maxUse")
-                      //}}
+                      onChange={html =>
+                        this.handleChange(html.target.value, "maxUse")
+                      }
+                      invalid={isInvalid.maxUse}
                     />
                   </FormGroup>
 
@@ -226,33 +345,46 @@ class ReactTables extends React.Component {
                       className={classes.input}
                       id="Expire"
                       placeholder="Expire"
-                      //inputProps={{
-                       // invalid: isInvalid.expire,
-                       // onChange: e =>
-                         // this.handleChange(e.target.value, "expire")
-                     // }}
+                      onChange={html =>
+                        this.handleChange(html.target.value, "expire")
+                      }
+                      invalid={isInvalid.expire}
                     />
                   </FormGroup>
 
-                  <FormGroup>
-                    <Label className={classes.input} for="exampleDate">
+                  <FormGroup widths={2}>
+                    <Label
+                      className={classes.input}
+                      for="exampleEmail"
+                      sm={2}
+                      size="lg"
+                    >
                       maxUsePerUser
                     </Label>
                     <Input
-                      type="date"
-                      name="date"
                       className={classes.input}
-                      id="maxUsePerUser"
+                      label="maxUsePerUser"
                       placeholder="maxUsePerUser"
-                      //inputProps={{
-                        //invalid: isInvalid.maxUsePerUser,
-                       // onChange: e =>
-                         // this.handleChange(e.target.value, "maxUsePerUser")
-                     // }}
+                      onChange={html =>
+                        this.handleChange(html.target.value, "maxUsePerUser")
+                      }
+                      invalid={isInvalid.discount}
                     />
                   </FormGroup>
-
-                  <Button color="success" type="submit">
+                  <Button
+                    color="default"
+                    className={classes.addButton}
+                    onClick={() => this.handleClick2()}
+                    style={{  minWidth: "110px" }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    color="success"
+                    style={{  minWidth: "110px" }}
+                    type="button"
+                    onClick={() => this.validate(data, isInvalid)}
+                  >
                     Submit
                   </Button>
                 </Form>
@@ -328,5 +460,5 @@ const styles = {
   font: {}
 };
 
-export const page = inject("orderList")(observer(ReactTables));
+export const page = inject("createCouponStore")(observer(ReactTables));
 export default withStyles(styles)(page);

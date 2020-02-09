@@ -18,7 +18,7 @@ import MenuList from "@material-ui/core/MenuList";
 import axios from "axios";
 import { api } from '../../config/config';
 
-const options = ['paid', 'uploaded', 'reserved'];
+const options = ['Amount', 'Percent'];
 
 export default function SplitButton(props) {
   const [open, setOpen] = React.useState(false);
@@ -50,15 +50,18 @@ export default function SplitButton(props) {
  
   return (
    
-    <Grid container>
-      <Grid item xs={12} align="center">
-        <ButtonGroup
-          variant="contained"
-          color="primary"
-          ref={anchorRef}
-          aria-label="Split button"
-        >
-          <Button>{options[selectedIndex]}</Button>
+    <Grid container style = {{
+      width: "55%",
+      padding: "12px 20px",
+      margin: "8px 0",
+      display: "inline-block",
+      border: "1px solid #ccc",
+      borderRadius: "4px",
+      boxsizing: "border-box"
+    }}>
+      <Grid item xs={12} align="center" >
+       
+          <Button >{options[selectedIndex]}</Button>
           <Button 
             color="primary"
             variant="contained"
@@ -69,8 +72,10 @@ export default function SplitButton(props) {
           >
             <ArrowDropDownIcon />
           </Button>
-        </ButtonGroup>
-        <Popper
+       
+        <Popper style = {{
+      width: "100%",
+     }}
           open={open}
           anchorEl={anchorRef.current}
           transition
@@ -90,7 +95,7 @@ export default function SplitButton(props) {
                     {options.map((option, index) => (
                       <MenuItem
                         key={option}
-                        disabled={index === 3}
+                        disabled={index === 2}
                         selected={index === selectedIndex}
                         onClick={event => handleMenuItemClick(event, index)}
                       >

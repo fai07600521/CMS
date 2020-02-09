@@ -79,7 +79,7 @@ class RegularForms extends React.Component {
      await this.props.historyEditStore.handleChange(value, key);
      
    }
-
+  
   handleChange(html, key) {
     console.log("html", html);
     this.props.historyEditStore.handleChange(html, key);

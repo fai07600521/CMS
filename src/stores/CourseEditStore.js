@@ -67,7 +67,11 @@ export class CouponStore extends BaseStore {
     const priceNum = +this.data.price
     this.handleChange(priceNum,"price")
     try {
-      const response = await axios.post(`${url}/add/course_detail`,this.data);
+      const response = await axios.post(`${url}/add/course_detail`,this.data ,{
+        headers: {
+          Authorization: `Bearer ${cookies.get('loginToken')}`
+        }
+      })
       console.log("response555",response)
       if (response.status === 200) {
         return response.data;

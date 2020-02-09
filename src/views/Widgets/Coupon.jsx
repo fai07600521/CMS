@@ -14,13 +14,9 @@ import axios from "axios";
 import qs from "query-string";
 import Swal from "sweetalert2";
 import { api } from "../../config/config";
-//import Widgegts from "./views/Widgets/Widgets";
 import PropTypes from "prop-types";
-// react component for creating dynamic tables
 import ReactTable from "react-table";
-import Person from "@material-ui/icons/Person";
 import Edit from "@material-ui/icons/Edit";
-// @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
 // @material-ui/icons
 import Assignment from "@material-ui/icons/Assignment";
@@ -38,6 +34,7 @@ import CardHeader from "components/Card/CardHeader.jsx";
 import { observer, inject } from "mobx-react";
 import Add from "@material-ui/icons/Add";
 import { dataTable } from "variables/general.jsx";
+import moment from 'moment'
 
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.jsx";
 
@@ -47,14 +44,14 @@ class ReactTables extends React.Component {
     this.state = {};
   }
   newMethod() {
-    return "courseList";
+    return "couponList";
   }
 
-  createInfo(courseList) {
+  createInfo(couponList) {
     // eslint-disable-next-line no-undef
     // eslint-disable-next-line react/prop-types
-    // const { courseList } = this.props.courseList.toJS();
-    return courseList.map((prop, key) => {
+    // const { couponList } = this.props.couponList.toJS();
+    return couponList.map((prop, key) => {
       // eslint-disable-next-line react/prop-types
       console.log("props", this.props);
       const { classes } = this.props;
@@ -66,7 +63,7 @@ class ReactTables extends React.Component {
         const condition = prop2.color;
         return (
           <Button
-            onClick={() => this.handleClick(condition, prop.id, key)}
+            onClick={() => this.handleClick(condition, prop.code, key)}
             color={prop2.color}
             className={classes.actionButton}
             size="sm"
@@ -87,7 +84,7 @@ class ReactTables extends React.Component {
         redeem: (prop.redeem) ? prop.redeem : "-",
         createdAt: (prop.createdAt) ? prop.createdAt : "-",
         updatedAt: (prop.updatedAt) ? prop.updatedAt : "-",
-        expire:(prop.expire) ? (prop.expire) : "-",
+        expire:(prop.expire) ? moment(prop.expire).format('DD/MM/YYYY') : "-",
         maxuseperuser:(prop.maxUsePerUser) ? prop.maxUsePerUser : "-",
         maxuse:(prop.maxUse) ? prop.maxUse  : "-",
         //location: <td dangerouslySetInnerHTML={{__html: prop.location}} />,
@@ -101,7 +98,7 @@ class ReactTables extends React.Component {
   }
 
   async componentWillMount() {
-    await this.props.courseList.initData();
+    await this.props.couponList.initData();
     // this.setState({
     //   data: info
     // });
@@ -109,7 +106,7 @@ class ReactTables extends React.Component {
     // if (!query.id) {
     //   this.props.history.push('/error');
     // }
-    const res = await axios.get(`${api.url}/course/${query.id}`);
+    const res = await axios.get(`${api.url}/course/${query.code}`);
     console.log("ress", res);
     const course = res.data;
     this.setState({ course: course });
@@ -117,7 +114,7 @@ class ReactTables extends React.Component {
   }
 
   handleClick(condition, code, index) {
-    const { courseList } = this.props.courseList.toJS();
+    const { couponList } = this.props.couponList.toJS();
     // eslint-disable-next-line react/prop-types
     console.log("condition", condition, "code", code);
     switch (condition) {
@@ -148,6 +145,10 @@ class ReactTables extends React.Component {
     }
   }
 
+  async handleClick2() {
+    this.props.history.push(`admin/historyOrder`);
+  }
+
   async alert(id, index) {
     console.log("alert");
     let confirmDialogOptions = {
@@ -165,7 +166,7 @@ class ReactTables extends React.Component {
       preConfirm: async () => {
         try {
           const result = axios.delete(`${api.url}/delete/course_detail/${id}`);
-          await this.props.courseList.deleteElement(index);
+          await this.props.couponList.deleteElement(index);
           result === 200 &&
             (await Swal.fire({
               type: "success",
@@ -173,7 +174,11 @@ class ReactTables extends React.Component {
               text: "Thank you for your purchase",
               showConfirmButton: false
               //timer: 1500
-            }));
+            })).then((result) => {
+              if (result.value) {
+                this.handleClick2()
+              }
+            })
           return result;
         } catch (error) {
           await Swal.fire({
@@ -195,10 +200,10 @@ class ReactTables extends React.Component {
   }
 
   render() {
-    const { courseList } = this.props.courseList.toJS();
+    const { couponList } = this.props.couponList.toJS();
    
-    const info = this.createInfo(courseList);
-    console.log("courseList");
+    const info = this.createInfo(couponList);
+    console.log("couponList");
     console.log(info);
     const { classes } = this.props;
     return (
@@ -291,5 +296,5 @@ const styles = {
   }
 };
 
-export const page = inject("courseList")(observer(ReactTables));
+export const page = inject("couponList")(observer(ReactTables));
 export default withStyles(styles)(page);

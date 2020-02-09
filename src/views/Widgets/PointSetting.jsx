@@ -149,5 +149,5 @@ const styles = {
   }
 };
 
-export const page = inject("orderList")(observer(ReactTables));
+export const page = inject("couponHistory")(observer(ReactTables));
 export default withStyles(styles)(page);

@@ -2,7 +2,8 @@ import Coupon from "views/Widgets/Coupon.jsx";
 import CouponHistory from "views/Widgets/CouponHistory.jsx";
 import WidgetsIcon from "@material-ui/icons/Widgets";
 import PointSetting from "views/Widgets/PointSetting.jsx";
-import CreateCoupon from "views/Widgets/CreateCoupon";
+import histEdit from "views/Widgets/HistoryEdit";
+
 var dashRoutes = [
   {
     path: "/coupon",
@@ -26,6 +27,14 @@ var dashRoutes = [
     rtlName: "الحاجيات",
     icon: WidgetsIcon,
     component: PointSetting,
+    layout: "/admin"
+  },
+  {
+    path: "/hist",
+    name: "histEdit",
+    rtlName: "الحاجيات",
+    icon: WidgetsIcon,
+    component: histEdit,
     layout: "/admin"
   }
 ];

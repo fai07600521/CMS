@@ -13,6 +13,7 @@ import React from "react";
 import axios from "axios";
 import qs from "query-string"
 import Swal from 'sweetalert2';
+import moment from 'moment'
 import { api } from '../../config/config';
 //import Widgegts from "./views/Widgets/Widgets";
 import PropTypes from "prop-types";
@@ -47,15 +48,15 @@ class ReactTables extends React.Component {
     this.state = {};
   }
   newMethod() {
-    return "orderList";
+    return "couponHistory";
   }
 
-  createInfo2(orderList) {
+  createInfo2(couponHistory) {
     // eslint-disable-next-line no-undef
     // eslint-disable-next-line react/prop-types
-    // const { orderList } = this.props.orderList.toJS();
-    console.log("get in form",orderList);
-    return orderList.map((prop, key) => {
+    // const { couponHistory } = this.props.couponHistory.toJS();
+    console.log("get in form",couponHistory);
+    return couponHistory.map((prop, key) => {
       // eslint-disable-next-line react/prop-types
       const { classes } = this.props;
       const fillButtons = [
@@ -78,13 +79,15 @@ class ReactTables extends React.Component {
       });
       return {
         //Name: `${prop.firstname} ${prop.lastname}` ,
-        bookingID: (prop.bookingId) ? "Percent" : "Amount",
-        bookingDate:(prop.bookingDate) ? prop.name : "Amount",
-        code: (prop.code) ? "Yes" : "No",
-        pointAmount: (prop.discount) ? prop.code : "-",
-        discount:  (prop.priceAfterDiscount) ? prop.point : "-",
-        email: (prop.user) ? prop.discount : "-",
-        fullname: (prop.passengerName) ? prop.redeem : "-",
+        bookingID: (prop.bookingId) ?prop.bookingId : "-",
+        type:(prop.type) ? prop.type : "-",
+        bookingDate:(prop.bookingDate) ? moment(prop.bookingDate).format('DD/MM/YYYY HH:mm:ss'): "-",
+        code: (prop.code) ? prop.code : "-",
+        pointAmount: (prop.point) ? prop.point : "-",
+        discount:  (prop.discount) ? prop.discount : "-",
+        priceAfterDiscount : (prop.priceAfterDiscount) ? prop.priceAfterDiscount : "-",
+        email: (prop.user) ? prop.user : "-",
+        fullname: (prop.passengerName) ? prop.passengerName : "-",
         actions: (
           // we've added some custom button actions
           <div className="actions-right">{fillButtons}</div>
@@ -95,7 +98,7 @@ class ReactTables extends React.Component {
 
 
   async componentWillMount() {
-    await this.props.orderList.initData();
+    await this.props.couponHistory.initData();
     // const info = await this.createInfo2();
     // this.setState({
     //   data: info
@@ -160,7 +163,7 @@ class ReactTables extends React.Component {
       preConfirm: async () => {
         try {
           const result = axios.delete(`${api.url}/delete/order/${id}`);
-          await this.props.orderList.deleteElement(index);
+          await this.props.couponHistory.deleteElement(index);
           result === 200 &&
             (await Swal.fire({
               type: "success",
@@ -184,9 +187,9 @@ class ReactTables extends React.Component {
   }
 
   render() {
-    const { orderList } = this.props.orderList.toJS();
-    console.log(orderList)
-    const info = this.createInfo2(orderList || []);
+    const { couponHistory } = this.props.couponHistory.toJS();
+    console.log(couponHistory)
+    const info = this.createInfo2(couponHistory || []);
     // console.log("see this",this.state.data)
     const { classes } = this.props;
     return (
@@ -211,6 +214,10 @@ class ReactTables extends React.Component {
                     accessor: "bookingID"
                   },
                   {
+                    Header: "Type",
+                    accessor: "type"
+                  },
+                  {
                     Header: "Booking Date",
                     accessor: "bookingDate"
                   },
@@ -228,13 +235,18 @@ class ReactTables extends React.Component {
 
                   },
                   {
+                    Header: "Price After Discount",
+                    accessor: "priceAfterDiscount"
+                  },
+                  {
                     Header: "Email",
                     accessor: "email",
                   },
                   {
                     Header: "Full Name",
                     accessor: "fullname",
-                  }
+
+                  },
                 ]}
                 defaultPageSize={10}
                 // showPaginationTop
@@ -264,5 +276,5 @@ const styles = {
   }
 };
 
-export const page = inject("orderList")(observer(ReactTables));
+export const page = inject("couponHistory")(observer(ReactTables));
 export default withStyles(styles)(page);
