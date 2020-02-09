@@ -169,7 +169,7 @@ class Dashboard extends React.Component {
               <div className={classes.container}>
                 <Switch>
                   {this.getRoutes(routes)}
-                  <Redirect from="/admin" to="/admin/dashboard" />
+                  <Redirect from="/admin" to="/admin/coupon" />
                 </Switch>
               </div>
             </div>
@@ -177,7 +177,7 @@ class Dashboard extends React.Component {
             <div className={classes.map}>
               <Switch>
                 {this.getRoutes(routes)}
-                <Redirect from="/admin" to="/admin/dashboard" />
+                <Redirect from="/admin" to="/admin/coupon" />
               </Switch>
             </div>
           )}
