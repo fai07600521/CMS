@@ -125,7 +125,7 @@ class ReactTables extends React.Component {
         break;
       case "success":
         console.log("get in 2");
-        this.props.history.push(`/historyEdit?id=${id}`);
+        //this.props.history.push(`/historyEdit?id=${id}`);
         break;
       case "danger":
         try {

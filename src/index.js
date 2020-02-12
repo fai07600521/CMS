@@ -14,7 +14,6 @@ import EditCoupon from "./views/Widgets/EditCoupon.jsx"
 import CouponHistory from "views/Widgets/CouponHistory.jsx";
 import PointSetting from "views/Widgets/PointSetting.jsx";
 import CreateCoupon from "views/Widgets/CreateCoupon";
-import histt from "views/Widgets/HistoryEdit";
 import 'raf/polyfill';
 const hist = createBrowserHistory();
 ReactDOM.render(
@@ -29,7 +28,6 @@ ReactDOM.render(
         <Route path="/history" component={CouponHistory} />
         <Route path="/point" component={PointSetting} />
         <Route path="/create" component={CreateCoupon} />
-        <Route path="/hist" component={histt} />
          <Redirect from="/" to="/admin/coupon" /> 
       </Switch>
     </Router>

@@ -29,6 +29,7 @@
     "prosemirror-utils": "^0.6.6",
     "query-string": "^6.8.1",
     "querystring": "^0.2.0",
+    "radium": "^0.26.0",
     "react": "16.8.6",
     "react-big-calendar": "0.21.0",
     "react-bootstrap-sweetalert": "4.4.1",

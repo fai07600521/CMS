@@ -11,6 +11,7 @@
 /* eslint-disable react/no-deprecated */
 import React from "react";
 import axios from "axios";
+import Datetime from "react-datetime";
 import Swal from "sweetalert2";
 //import Widgegts from "./views/Widgets/Widgets";
 import PropTypes from "prop-types";
@@ -31,6 +32,11 @@ import { observer, inject } from "mobx-react";
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.jsx";
 import { Form, FormGroup, Input, Label, Col } from "reactstrap";
 import { responsiveFontSizes } from "@material-ui/core/styles";
+import {
+  MuiPickersUtilsProvider,
+  KeyboardTimePicker,
+  KeyboardDatePicker
+} from "@material-ui/pickers";
 class ReactTables extends React.Component {
   constructor(props) {
     super(props);
@@ -59,20 +65,6 @@ class ReactTables extends React.Component {
   }
 
   passValidate(value2) {
-    console.log("!value.name && passValidate");
-    console.log(
-      !value.name &&
-        !value.code &&
-        !value.dateEndInvalid &&
-        !value.dateEnd &&
-        !value.point &&
-        !value.discountType &&
-        !value.discount &&
-        !value.maxUse &&
-        !value.expire &&
-        !value.maxUsePerUser
-    );
-
     if (
       !value.name &&
       !value.code &&
@@ -280,7 +272,7 @@ class ReactTables extends React.Component {
                       sm={2}
                       size="lg"
                     >
-                      DiscountType
+                      Discount Type
                     </Label>
                     <select
                       className={classes.select}
@@ -289,7 +281,6 @@ class ReactTables extends React.Component {
                       }
                       invalid={isInvalid.discountType}
                     >
-                      <option value="">Select DiscountType</option>
                       <option value="amount">Amount</option>
                       <option value="percent">Percent</option>
                     </select>
@@ -348,9 +339,25 @@ class ReactTables extends React.Component {
                       onChange={html =>
                         this.handleChange(html.target.value, "expire")
                       }
-                      invalid={isInvalid.expire}
                     />
                   </FormGroup>
+                  {/* <FormGroup>
+                    <Label className={classes.input} for="exampleDate">
+                      Expire
+                    </Label>
+                    <Input
+                      type="date"
+                      name="date"
+                      className={classes.input}
+                      id="Expire"
+                      placeholder="Expire"
+                      onChange={html =>
+                        this.handleChange(html.target.value, "expire")
+                      }
+                      invalid={isInvalid.expire}
+
+                    />
+                  </FormGroup>  */}
 
                   <FormGroup widths={2}>
                     <Label
@@ -375,13 +382,13 @@ class ReactTables extends React.Component {
                     color="default"
                     className={classes.addButton}
                     onClick={() => this.handleClick2()}
-                    style={{  minWidth: "110px" }}
+                    style={{ minWidth: "110px" }}
                   >
                     Cancel
                   </Button>
                   <Button
                     color="success"
-                    style={{  minWidth: "110px" }}
+                    style={{ minWidth: "110px" }}
                     type="button"
                     onClick={() => this.validate(data, isInvalid)}
                   >
@@ -423,6 +430,16 @@ const styles = {
     border: "1px solid #ccc",
     borderRadius: "4px",
     boxsizing: "border-box"
+  },
+  input2: {
+    width: "55%",
+    padding: "12px 20px",
+    margin: "8px 0",
+    display: "inline-block",
+    border: "1px solid #ccc",
+    borderRadius: "4px",
+    boxsizing: "border-box",
+    backgroundColor: "white"
   },
   w: {
     width: "60%",

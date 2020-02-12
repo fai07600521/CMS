@@ -12,6 +12,7 @@
 import qs from "query-string";
 import React from "react";
 import axios from "axios";
+import Datetime from "react-datetime";
 import Calendar from 'react-input-calendar'
 import moment from 'moment'
 import DatePicker from 'react-datepicker';
@@ -35,7 +36,8 @@ import { observer, inject } from "mobx-react";
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.jsx";
 import { Form, FormGroup, Input, Label, Col } from "reactstrap";
 import { responsiveFontSizes } from "@material-ui/core/styles";
-import CustomSelect from './CustomSelect';
+
+
 class ReactTables extends React.Component {
   constructor(props) {
     super(props);
@@ -117,18 +119,19 @@ class ReactTables extends React.Component {
     const query = qs.parse(this.props.location.search);
     const l = await this.props.editCouponStore.initData(query.id);
     console.log("data will mount");
-    console.log(l);
+    console.log(query.id);
   }
 
   handleChange(html, key) {
     console.log("html", html);
+    console.log("key", key);
     this.props.editCouponStore.handleChange(html, key);
   }
 
-  async handlechangeCustomSelect(value , key){
-    console.log('value',value)
+  async handlechangeCustomSelect(value, key) {
+    console.log('value', value)
     await this.props.editCouponStore.handleChange(value, key);
-    
+
   }
   render() {
     // console.log("see this",this.state.data)
@@ -137,7 +140,7 @@ class ReactTables extends React.Component {
     const query = qs.parse(this.props.location.search);
     const data = this.props.editCouponStore.toJS();
     console.log("dataaaaa");
-    console.log(data.data);
+    console.log(data);
     return (
       <GridContainer>
         <GridItem xs={12}>
@@ -251,15 +254,15 @@ class ReactTables extends React.Component {
                       sm={2}
                       size="lg"
                     >
-                      DiscountType
+                      Discount Type
                     </Label>
                     <Input
-                   
+
                       className={classes.select}
                       type="select"
                       name="select"
                       id="exampleSelect"
-                      placeholder = "Select an option"
+                      placeholder="Select an option"
                       onChange={html =>
                         this.handleChange(html.target.value, "discountType")
                       }
@@ -272,7 +275,7 @@ class ReactTables extends React.Component {
                       </option>
                     </Input>
                   </FormGroup>
-                  
+
                   <FormGroup widths={2}>
                     <Label
                       className={classes.input}
@@ -280,19 +283,20 @@ class ReactTables extends React.Component {
                       sm={2}
                       size="lg"
                     >
-                      Discount
+                      Amount
                     </Label>
                     <Input
                       className={classes.input}
                       label="discount"
                       placeholder="Discount"
-                      value={data.data.discount}
+                      value={(data.data.discount) ? data.data.discount : data.data.discountPercent}
                       onChange={html =>
                         this.handleChange(html.target.value, "discount")
                       }
                     />
+
                   </FormGroup>
-                  
+
                   <FormGroup unstackable widths={2}>
                     <Label
                       className={classes.input}
@@ -312,20 +316,21 @@ class ReactTables extends React.Component {
                       }
                     />
                   </FormGroup>
-                  
+
                   <FormGroup>
                     <Label className={classes.input} for="exampleDate">
                       Expire
                     </Label>
-                    <Input
-                      type="date"
-                      name="expire"
-                      className={classes.input}
-                      placeholder="Expire"
-                      value={  moment(data.data.expire).format('DD/MM/YYYY') }  
+                    <Datetime className={classes.input2}
+                      timeFormat={false}
+                      inputProps={{
+                             placeholder:moment(data.data.expire).format('MM/DD/YYYY')
+                          }}
+                    
                       onChange={html =>
-                        this.handleChange(html.target.value, "expire")
+                        this.handleChange(html, "expire")
                       }
+
                     />
                   </FormGroup>
 
@@ -402,6 +407,16 @@ const styles = {
     borderRadius: "4px",
     boxsizing: "border-box"
   },
+  input2: {
+    width: "55%",
+    padding: "12px 20px",
+    margin: "8px 0",
+    display: "inline-block",
+    border: "1px solid #ccc",
+    borderRadius: "4px",
+    boxsizing: "border-box",
+    backgroundColor: "white"
+  },
   w: {
     width: "60%",
     padding: "12px 20px",
@@ -433,7 +448,10 @@ const styles = {
   type: {
     padding: "50px",
     color: "black"
-  }
+  },
+  placeholder1: {
+    color: "white",
+  },
 };
 
 export const page = inject("editCouponStore")(observer(ReactTables));

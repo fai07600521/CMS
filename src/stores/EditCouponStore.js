@@ -21,6 +21,7 @@ export class editCouponStore extends BaseStore {
         point: "",
         discountType: "",
         discount: "",
+        discountPercent:"",
         maxUse: "",
         expire: "",
         maxUsePerUser: ""
@@ -29,8 +30,6 @@ export class editCouponStore extends BaseStore {
   }
 
   async initData(id) {
-    console.log("initData id");
-    console.log(id);
     try {
       const response = await axios.get(`https://api.joydrive.me/coupon/${id}` , 
        {
@@ -46,6 +45,7 @@ export class editCouponStore extends BaseStore {
         this.data.point = response.data.coupon.point || ``;
         this.data.discountType = response.data.coupon.discountType || ``;
         this.data.discount = response.data.coupon.discount || ``;
+        this.data.discountPercent = response.data.coupon.discountPercent || ``;
         this.data.maxUse = response.data.coupon.maxUse || ``;
         this.data.expire = response.data.coupon.expire || ``;
         this.data.maxUsePerUser = response.data.coupon.maxUsePerUser || ``;

@@ -74,7 +74,7 @@ class ReactTables extends React.Component {
         );
       });
       return {
-        id: key,
+        id: prop.id,
         type: (prop.discountPercent) ? "Percent" : "Amount",
         amount:(prop.name) ? prop.name : "Amount",
         visible: (prop.visible) ? "Yes" : "No",
@@ -99,18 +99,7 @@ class ReactTables extends React.Component {
 
   async componentWillMount() {
     await this.props.couponList.initData();
-    // this.setState({
-    //   data: info
-    // });
-    const query = qs.parse(this.props.location.search);
-    // if (!query.id) {
-    //   this.props.history.push('/error');
-    // }
-    const res = await axios.get(`${api.url}/course/${query.code}`);
-    console.log("ress", res);
-    const course = res.data;
-    this.setState({ course: course });
-    // console.log(this.state.course[0].price);
+  
   }
 
   handleClick(condition, code, index) {
