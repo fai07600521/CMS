@@ -73,10 +73,7 @@ export class HistoryEditStore extends BaseStore {
 
   async rdyToPut(url) {
     try {
-      const response = await axios.put(
-        `${url}/edit/order/${this.data.orderId}`,
-        this.data
-      );
+      const response = await axios.put(`${url}/edit/order/${this.data.orderId}`, this.data);
       if (response.status === 200) {
         return response.status;
       }

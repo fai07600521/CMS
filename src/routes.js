@@ -2,7 +2,7 @@ import Coupon from "views/Widgets/Coupon.jsx";
 import CouponHistory from "views/Widgets/CouponHistory.jsx";
 import WidgetsIcon from "@material-ui/icons/Widgets";
 import PointSetting from "views/Widgets/PointSetting.jsx";
-
+import Feedback from "views/Widgets/Feedback";
 
 var dashRoutes = [
   {
@@ -27,6 +27,13 @@ var dashRoutes = [
     rtlName: "الحاجيات",
     icon: WidgetsIcon,
     component: PointSetting,
+    layout: "/admin"
+  },{
+    path: "/feedback",
+    name: "Feedback",
+    rtlName: "الحاجيات",
+    icon: WidgetsIcon,
+    component: Feedback,
     layout: "/admin"
   }
 ];
