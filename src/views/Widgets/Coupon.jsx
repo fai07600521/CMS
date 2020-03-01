@@ -52,8 +52,6 @@ class ReactTables extends React.Component {
     // eslint-disable-next-line react/prop-types
     // const { couponList } = this.props.couponList.toJS();
     return couponList.map((prop, key) => {
-      // eslint-disable-next-line react/prop-types
-      console.log("props", this.props);
       const { classes } = this.props;
       console.log("classes", classes);
       const fillButtons = [
@@ -76,7 +74,7 @@ class ReactTables extends React.Component {
       return {
         id: prop.id,
         type: (prop.discountPercent) ? "Percent" : "Amount",
-        amount:(prop.name) ? prop.name : "Amount",
+        amount:(prop.discount) ? prop.discount : prop.point,
         visible: (prop.visible) ? "Yes" : "No",
         code: (prop.code) ? prop.code : "-",
         point:  (prop.point) ? prop.point : "-",
