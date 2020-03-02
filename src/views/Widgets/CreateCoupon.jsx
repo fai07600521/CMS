@@ -155,16 +155,16 @@ class ReactTables extends React.Component {
         try {
           console.log("get ready to post");
           let result = await this.props.createCouponStore.rdyToPost();
-          console.log("result alert", result);
-          result === 200 &&
+          console.log("result alert", result.status);
+            result != " " &&
             (await Swal.fire({
               type: "success",
-              title: "Your order has been done",
-              text: "Thank you for your purchase",
-              showConfirmButton: false,
-              timer: 1500
+              title: "Your create has been done",
+              text: "Thank you for your creation",
+              showConfirmButton: false
+              //timer: 1500
             }));
-
+            this.props.history.push(`admin/coupon`);
           return result;
         } catch (error) {
           await Swal.fire({

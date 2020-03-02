@@ -89,9 +89,6 @@ class ReactTables extends React.Component {
       preConfirm: async () => {
         try {
           let result = await this.props.editCouponStore.rdyToPut(index);
-          console.log(index)
-          console.log("Result .....")
-          console.log(result)
           result === 200 &&
             (await Swal.fire({
               type: "success",
@@ -100,6 +97,7 @@ class ReactTables extends React.Component {
               showConfirmButton: false
               //timer: 1500
             }));
+            this.props.history.push(`admin/coupon`);
           return result;
         } catch (error) {
           await Swal.fire({
@@ -113,6 +111,7 @@ class ReactTables extends React.Component {
     };
     return await Swal.fire(confirmDialogOptions);
   }
+
 
   async componentWillMount() {
     // eslint-disable-next-line react/prop-typespush("/error")
